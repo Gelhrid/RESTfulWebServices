@@ -1,5 +1,6 @@
 package com.appmichalkodz.app.ws.controller;
 
+import com.appmichalkodz.app.ws.exceotions.UserServiceException;
 import com.appmichalkodz.app.ws.service.UserService;
 import com.appmichalkodz.app.ws.shared.dto.UserDto;
 import com.appmichalkodz.app.ws.ui.model.request.UserDetailsRequestModel;
@@ -27,12 +28,12 @@ public class UserController {
 
     @PostMapping( produces = {MediaType.APPLICATION_XML_VALUE, MediaType.APPLICATION_JSON_VALUE},
                   consumes = {MediaType.APPLICATION_XML_VALUE, MediaType.APPLICATION_JSON_VALUE})
-    public UserRest createUser(@RequestBody UserDetailsRequestModel userDetails) throws Exception {
+    public UserRest createUser(@RequestBody UserDetailsRequestModel userDetails) throws UserServiceException {
 
         UserRest returnValue = new UserRest();
 
         if(userDetails.getFirstName().isEmpty()){
-            throw new Exception(ErrorMessages.MISSING_REQUIRED_FIELD.getErrorMessage());
+            throw new UserServiceException(ErrorMessages.MISSING_REQUIRED_FIELD.getErrorMessage());
         }
         UserDto userDto = new UserDto();
 
