@@ -1,7 +1,6 @@
 package com.appmichalkodz.app.ws.exceotions;
 
 import com.appmichalkodz.app.ws.ui.model.response.ErrorMessage;
-import com.appmichalkodz.app.ws.ui.model.response.ErrorMessages;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -19,4 +18,13 @@ public class AppExceptionHandler {
         ErrorMessage errorMessage = new ErrorMessage(new Date(), ex.getMessage());
         return new ResponseEntity<>(errorMessage, new HttpHeaders(), HttpStatus.INTERNAL_SERVER_ERROR);
     }
+
+
+    @ExceptionHandler(Exception.class)
+    public ResponseEntity<Object> generalHandler(Exception ex, WebRequest request){
+        ErrorMessage errorMessage = new ErrorMessage(new Date(), ex.getMessage());
+        return new ResponseEntity<>(errorMessage, new HttpHeaders(), HttpStatus.INTERNAL_SERVER_ERROR);
+    }
+
+
 }
