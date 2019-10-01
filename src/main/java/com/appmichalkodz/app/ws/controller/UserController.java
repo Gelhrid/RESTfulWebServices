@@ -4,8 +4,7 @@ import com.appmichalkodz.app.ws.exceotions.UserServiceException;
 import com.appmichalkodz.app.ws.service.UserService;
 import com.appmichalkodz.app.ws.shared.dto.UserDto;
 import com.appmichalkodz.app.ws.ui.model.request.UserDetailsRequestModel;
-import com.appmichalkodz.app.ws.ui.model.response.ErrorMessages;
-import com.appmichalkodz.app.ws.ui.model.response.UserRest;
+import com.appmichalkodz.app.ws.ui.model.response.*;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
@@ -46,14 +45,33 @@ public class UserController {
         return returnValue;
     }
 
-    @PutMapping
-    public String updateUser(){
-        return " update user called";
+    @PutMapping( value = "/{id}",
+            produces = {MediaType.APPLICATION_XML_VALUE, MediaType.APPLICATION_JSON_VALUE},
+            consumes = {MediaType.APPLICATION_XML_VALUE, MediaType.APPLICATION_JSON_VALUE})
+    public UserRest updateUser(@RequestBody UserDetailsRequestModel userDetails, @PathVariable("id") String userID){
+
+        UserRest returnValue = new UserRest();
+        UserDto userDto = new UserDto();
+
+        BeanUtils.copyProperties(userDetails, userDto);
+
+        UserDto updatedUser = userService.updateUser(userID, userDto);
+
+        BeanUtils.copyProperties(updatedUser, returnValue);
+
+        return returnValue;
     }
 
-    @DeleteMapping
-    public String deleteUser(){
-        return  "delete user called";
+    @DeleteMapping(value = "/{id}",
+            produces = {MediaType.APPLICATION_XML_VALUE, MediaType.APPLICATION_JSON_VALUE})
+    public OperationStatusModel deleteUser(@PathVariable("id") String userID){
+        OperationStatusModel returnedValue = new OperationStatusModel();
+        returnedValue.setOperationName(RequestOperationName.DELETE.name());
+
+        userService.deleteUser(userID);
+        returnedValue.setOperationResult(RequestOperationStatus.SUCCESS.name());
+
+        return  returnedValue;
 
     }
 

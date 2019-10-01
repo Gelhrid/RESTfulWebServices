@@ -5,6 +5,7 @@ import com.appmichalkodz.app.ws.io.repositories.UserRepository;
 import com.appmichalkodz.app.ws.service.UserService;
 import com.appmichalkodz.app.ws.shared.Utils;
 import com.appmichalkodz.app.ws.shared.dto.UserDto;
+import com.appmichalkodz.app.ws.ui.model.response.ErrorMessages;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.User;
@@ -57,6 +58,36 @@ public class UserServiceImp implements UserService {
         BeanUtils.copyProperties(userEntity, returnValue);
         return returnValue;
 
+    }
+
+    @Override
+    public UserDto updateUser(String userID, UserDto userDto) {
+        UserEntity userEntity = userRepository.findByUserId(userID);
+        UserDto returnValue = new UserDto();
+        if(userEntity == null){
+            throw  new UsernameNotFoundException(ErrorMessages.NO_RECORD_FOUND.getErrorMessage());
+        }
+
+        userEntity.setFirstName(userDto.getFirstName());
+        userEntity.setLastName(userDto.getLastName());
+
+        UserEntity updatedEntity = userRepository.save(userEntity);//czy to konieczne jak i tak na innym obiekci eto zmienialem, utaj teoretycznie wiem ze zmiana nastopila i bedzie zapisana
+
+        BeanUtils.copyProperties(updatedEntity, returnValue);
+
+
+        return returnValue;
+    }
+
+    @Override
+    public void deleteUser(String userId) {
+        //to raczej nie optymalne!!
+        //sprovowac co sie stanie jak custom deleta zrobic bede chcial na jakims obikecie  co nie istnieje -> delete By id i ppodam zly id
+        UserEntity userEntity = userRepository.findByUserId(userId);
+        if(userEntity == null){
+            throw  new UsernameNotFoundException(ErrorMessages.NO_RECORD_FOUND.getErrorMessage());
+        }
+        userRepository.delete(userEntity);
     }
 
     @Override
