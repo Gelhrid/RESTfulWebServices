@@ -8,6 +8,9 @@ import com.appmichalkodz.app.ws.shared.dto.UserDto;
 import com.appmichalkodz.app.ws.ui.model.response.ErrorMessages;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -15,6 +18,7 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
+import java.util.List;
 
 @Service
 public class UserServiceImp implements UserService {
@@ -88,6 +92,27 @@ public class UserServiceImp implements UserService {
             throw  new UsernameNotFoundException(ErrorMessages.NO_RECORD_FOUND.getErrorMessage());
         }
         userRepository.delete(userEntity);
+    }
+
+    @Override
+    public List<UserDto> getUsers(int page, int limit) {
+        List<UserDto> returnedValue = new ArrayList<>();
+        Pageable pageable = PageRequest.of(page, limit);
+
+        Page<UserEntity> all = userRepository.findAll(pageable);
+
+        //sprawdzic hasnext z Page pobawic sie tym na spokojnie
+
+        System.out.println(all.hasNext());
+        List<UserEntity> users = all.getContent();
+        for(UserEntity user: users){
+            UserDto userDto = new UserDto();
+            BeanUtils.copyProperties(user, userDto);
+            returnedValue.add(userDto);
+        }
+
+
+        return returnedValue;
     }
 
     @Override
