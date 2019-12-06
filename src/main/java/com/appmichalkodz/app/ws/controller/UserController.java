@@ -10,6 +10,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
 
+import javax.persistence.GeneratedValue;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.stream.Collectors;
+
 @RestController
 @RequestMapping("users")
 public class UserController {
@@ -23,6 +28,33 @@ public class UserController {
         UserDto userDto = userService.getUserByUserId(userID);
         BeanUtils.copyProperties(userDto, returnValue);
         return returnValue;
+    }
+
+    @GetMapping(value = "", produces = {MediaType.APPLICATION_XML_VALUE, MediaType.APPLICATION_JSON_VALUE})
+    public List<UserRest> getUsers(@RequestParam(value ="page", defaultValue = "1") int page, @RequestParam(value = "limit", defaultValue = "25") int limit){
+
+        List<UserRest> list = new ArrayList();
+        List<UserDto> lista = userService.getUsers(page, limit);
+
+        //to podspodem przepisac na jave 8!!!
+        for(UserDto userDto: lista){
+            UserRest userModel = new UserRest();
+            BeanUtils.copyProperties(userDto, userModel);
+            list.add(userModel);
+        }
+
+        List<UserRest> list2 = lista
+                .stream()
+                .map(this::fff) /// a jak to nie zadzialaa to map(a -> fff(a))
+                .collect(Collectors.toList());
+
+        return list;
+    }
+
+    public UserRest fff (UserDto userDto){
+        UserRest userModel = new UserRest();
+        BeanUtils.copyProperties(userDto, userModel);
+        return userModel;
     }
 
     @PostMapping( produces = {MediaType.APPLICATION_XML_VALUE, MediaType.APPLICATION_JSON_VALUE},
