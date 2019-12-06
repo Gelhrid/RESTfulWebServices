@@ -48,6 +48,7 @@ public class AuthenticationFilter  extends UsernamePasswordAuthenticationFilter 
         String usernmae = ((User)authResult.getPrincipal()).getUsername();
 //        String tokenSecret = new SecurityConstants().ge
         //username - u nas to email
+        //jak sie udalo tuaj jest tworzony token ktory zwracany jest w response
         String token = Jwts.builder()
                 .setSubject(usernmae)
                 .setExpiration(new Date(System.currentTimeMillis() + SecurityConstants.EXPIRATION_TIME))

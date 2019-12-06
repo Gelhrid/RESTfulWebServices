@@ -11,6 +11,7 @@ public class AppProperties {
     private Environment env;
 
     public String getTokenSecrest(){
+        System.out.println("skasuj mnie");
         return env.getProperty("tokenSecret");
     }
 
